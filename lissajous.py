@@ -9,9 +9,9 @@ from matplotlib import pyplot as plt
 class Model (nn.Module):
   def __init__(self):
     super(Model, self).__init__()
-    self.l1 = nn.Linear(2,20)
+    self.l1 = nn.Linear(6,20)
     self.l2 = nn.Linear(20,40)
-    self.l3 = nn.Linear(40,2)
+    self.l3 = nn.Linear(40,6)
 
   def forward(self,x):
     x = F.relu(self.l1(x))
@@ -135,7 +135,7 @@ def main():
     data_loader = torch.utils.data.DataLoader(dataset, batch_size=batch_size, shuffle=True, num_workers=8)
 
     model = Model()
-    criterion = nn.MSELoss()
+    criterion = nn.CrossEntropyLoss()
     learning_rate = 1e-4
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
