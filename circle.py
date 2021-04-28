@@ -43,28 +43,28 @@ def get_dataset(n):
         parameter = np.radians(np.linspace(1, 90, int(n/4)))
         x_1 = 2*np.sin(parameter) + np.random.normal(scale=0.001)
         y_1 = np.sin(2*parameter) + np.random.normal(scale=0.001)
-        dataset_1 = np.array([x_1, y_1, np.ones(int(n/4)), np.zeros(int(n/4)), np.zeros(int(n/4)), np.zeros(int(n/4))])
+        dataset_1 = np.array([x_1, y_1, np.ones(int(n/4)), np.zeros(int(n/4)), np.zeros(int(n/4)), np.zeros(int(n/4))]) #(x,y,1,0,0,0)
 
       elif i == 2:
 
         parameter = np.radians(np.linspace(91, 180, int(n/4)))
         x_2 = 2*np.sin(parameter) + np.random.normal(scale=0.001)
         y_2 = np.sin(2*parameter) + np.random.normal(scale=0.001)
-        dataset_2 = np.array([x_2, y_2, np.zeros(int(n/4)), np.zeros(int(n/4)), np.zeros(int(n/4)), np.ones(int(n/4))])
+        dataset_2 = np.array([x_2, y_2, np.zeros(int(n/4)), np.zeros(int(n/4)), np.zeros(int(n/4)), np.ones(int(n/4))]) #(x,y,0,0,0,1)
 
       elif i == 3:
 
         parameter = np.radians(np.linspace(181, 270, int(n/4)))
         x_3 = 2*np.sin(parameter) + np.random.normal(scale=0.001)
         y_3 = np.sin(2*parameter) + np.random.normal(scale=0.001)     
-        dataset_3 = np.array([x_3, y_3, np.zeros(int(n/4)), np.ones(int(n/4)), np.zeros(int(n/4)), np.zeros(int(n/4))])
+        dataset_3 = np.array([x_3, y_3, np.zeros(int(n/4)), np.ones(int(n/4)), np.zeros(int(n/4)), np.zeros(int(n/4))]) #(x,y,0,1,0,0)
 
       else:
 
         parameter = np.radians(np.linspace(271, 360, int(n/4)))
         x_4 = 2*np.sin(parameter) + np.random.normal(scale=0.001)
         y_4 = np.sin(2*parameter) + np.random.normal(scale=0.001)
-        dataset_4 = np.array([x_4, y_4, np.zeros(int(n/4)), np.zeros(int(n/4)), np.ones(int(n/4)), np.zeros(int(n/4))])      
+        dataset_4 = np.array([x_4, y_4, np.zeros(int(n/4)), np.zeros(int(n/4)), np.ones(int(n/4)), np.zeros(int(n/4))]) #(x,y,0,0,1,0)
 
     dataset = np.concatenate([dataset_1, dataset_2, dataset_3, dataset_4], 1)
     x = np.concatenate([x_1, x_2, x_3, x_4])
@@ -72,6 +72,7 @@ def get_dataset(n):
 
     dataset = dataset.T
 
+    print(dataset)
 
     return dataset, x, y
 
@@ -150,7 +151,7 @@ def main():
     model.eval()
     final_test_output = test(first_point, model)
 
-    final_x, final_y, a, b, c, d = final_test_output.T
+    final_x, final_y, a, b, c, d = final_test_output.T  #出力にa,b,c,d は使わない(象限)
 
     print("go")
 
