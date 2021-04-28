@@ -106,7 +106,7 @@ def test(first_point, model):
 
     record_output = np.array([[0.0, 0.0]])
 
-    for i in range(1000):
+    for i in range(360):
         test_output = model(first_point)
         first_point = test_output
         test_output = test_output.reshape(1,2).detach().numpy()
@@ -127,7 +127,7 @@ def drawing_loss_graph(epoch, train_loss_list):
 
 def main():
 
-    data_number = 1000 #準備するデータの数
+    data_number = 360 #準備するデータの数
     batch_size  = 20 # 1つのミニバッチのデータの数
 
     points, x, y = get_dataset(data_number)
