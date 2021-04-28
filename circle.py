@@ -163,3 +163,5 @@ def main():
     plt.scatter(final_x, final_y, label="trained", color = "b")
 if __name__ == '__main__':
     main()
+
+    
