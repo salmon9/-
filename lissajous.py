@@ -41,12 +41,38 @@ class my_dataset(torch.utils.data.Dataset):
 
 def get_dataset(n):
 
-    parameter = np.radians(np.linspace(0,360,n)) #0〜360のランダム値 p:媒介変数
-    x = 2*np.sin(parameter)
-    y = np.sin(2*parameter)
+    for i in range (1,5):
+      if i == 1:
 
-    dataset = np.array([x,y]).T
+        parameter = np.radians(np.linspace(1, 90, int(n/4)))
+        x_1 = 2*np.sin(parameter)
+        y_1 = np.sin(2*parameter)
+        dataset_1 = np.array([x_1, y_1, np.ones(int(n/4)), np.zeros(int(n/4)), np.zeros(int(n/4)), np.zeros(int(n/4))])
 
+      elif i == 2:
+
+        parameter = np.radians(np.linspace(91, 180, int(n/4)))
+        x_2 = 2*np.sin(parameter)
+        y_2 = np.sin(2*parameter)
+        dataset_2 = np.array([x_2, y_2, np.zeros(int(n/4)), np.ones(int(n/4)), np.zeros(int(n/4)), np.zeros(int(n/4))])
+
+      elif i == 3:
+
+        parameter = np.radians(np.linspace(181, 270, int(n/4)))
+        x_3 = 2*np.sin(parameter)
+        y_3 = np.sin(2*parameter)      
+        dataset_3 = np.array([x_3, y_3, np.zeros(int(n/4)), np.zeros(int(n/4)), np.ones(int(n/4)), np.zeros(int(n/4))])
+
+      else:
+
+        parameter = np.radians(np.linspace(271, 360, int(n/4)))
+        x_4 = 2*np.sin(parameter)
+        y_4 = np.sin(2*parameter)
+        dataset_4 = np.array([x_4, y_4, np.zeros(int(n/4)), np.zeros(int(n/4)), np.zeros(int(n/4)), np.ones(int(n/4))])      
+
+    dataset = np.concatenate([dataset_1, dataset_2, dataset_3, dataset_4], 1)
+    x = np.concatenate([x_1, x_2, x_3, x_4])
+    y = np.concatenate([y_1, y_2, y_3, y_4])
 
     return dataset, x, y
 
