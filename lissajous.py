@@ -126,7 +126,7 @@ def drawing_loss_graph(epoch, train_loss_list):
 def main():
 
     data_number = 200 #準備するデータの数
-    batch_size  = 200 # 1つのミニバッチのデータの数
+    batch_size  = 10 # 1つのミニバッチのデータの数
 
     points, x, y = get_dataset(data_number)
     dataset = my_dataset(points, noise=True)
