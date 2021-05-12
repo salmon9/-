@@ -7,17 +7,32 @@ from matplotlib import pyplot as plt
 import matplotlib.animation as animation
 
 
-class Model(nn.Module):
+class RNNcell(nn.Module):
     def __init__(self):
         super().__init__()
-        self.rnn = torch.nn.RNN(2, 20)
-        self.fc = torch.nn.Linear(20, 2)
-    def forward(self, x, hidden):
-    
-        output, h = self.rnn(x, hidden)
-        output = self.fc(output)
-        return output, h
+        self.input_size = input_size
+        self.hidden_size = hidden_size
+        self.rnncell = torch.nn.RNNCell(input_size, hidden_size)
 
+    def forward(self, x, hidden):
+        count = len(x)  # sequence length
+        output = torch.Tensor()
+        for idx in range(count):
+            hidden = self.rnncell(x[idx], hidden)
+            output = torch.cat((output, hidden))
+        output = output.reshape(len(x), -1, self.hidden_size)
+        return output, hidden
+
+class Model (torch.nn.Module):
+    def __init__(self, input_size, hidden_size, output_size):
+        super().__init__()
+        self.rnncekl = RNNcell(input_size, hidden_size)
+        self.fc = torch.nn.Linear(hidden_size, output_size)
+    def forward(self, x, hidden):
+        output, h = self.rnncell(x, hidden)
+        output = self.fc(output[:, -1])
+        return output, h
+        
 class my_dataset(torch.utils.data.Dataset):
   def __init__(self, point, noise):
 
