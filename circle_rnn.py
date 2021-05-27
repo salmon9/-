@@ -7,50 +7,41 @@ from matplotlib import pyplot as plt
 import matplotlib.animation as animation
 
 
-class RNNcell(nn.Module):
-    def __init__(self):
+class Model(torch.nn.Module):
+    def __init__(self, input_size, hidden_size):
         super().__init__()
         self.input_size = input_size
         self.hidden_size = hidden_size
         self.rnncell = torch.nn.RNNCell(input_size, hidden_size)
-
+        self.fc = torch.nn.Linear(hidden_size, 1)
     def forward(self, x, hidden):
         count = len(x)  # sequence length
         output = torch.Tensor()
         for idx in range(count):
-            hidden = self.rnncell(x[idx], hidden)
-            output = torch.cat((output, hidden))
+           hidden = self.rnncell(x[:, idx], hidden)
+           output = torch.cat((output, hidden))
         output = output.reshape(len(x), -1, self.hidden_size)
+        output  = self.fc(output[:,-1])
         return output, hidden
 
-class Model (torch.nn.Module):
-    def __init__(self, input_size, hidden_size, output_size):
-        super().__init__()
-        self.rnncekl = RNNcell(input_size, hidden_size)
-        self.fc = torch.nn.Linear(hidden_size, output_size)
-    def forward(self, x, hidden):
-        output, h = self.rnncell(x, hidden)
-        output = self.fc(output[:, -1])
-        return output, h
-        
 class my_dataset(torch.utils.data.Dataset):
-  def __init__(self, point, noise):
+  def __init__(self, points, time_step):
 
-    self.point = point
-    self.len = len(point) 
+    self.time_step = time_step
+    self.points = points
+    self.len = len(points)
 
   def __getitem__(self, index):
 
-#      input = self.point[index-1] + np.random.normal(scale=0.001) #indexの扱いに気を付ける
-#      target = self.point[index]  + np.random.normal(scale=0.001) #最初と同じ点にならないように
+    input_data = np.zeros((self.time_step, 2))
+    for i in range(self.time_step):
+      input_data[i] = self.points[index-self.time_step+i] + np.random.normal(scale=0.001)
+    target = self.points[index] + np.random.normal(scale=0.001)
 
-      input = self.point[:-1] + np.random.normal(scale=0.001)
-      target = self.point[1:] + np.random.normal(scale=0.001)
+    return input_data, target
 
-      print("input:", input.shape)
-      print("target:", target.shape)
-
-      return input, target
+  def __len__(self):
+    return self.len
 
   def __len__(self):
     return self.len
@@ -65,37 +56,28 @@ def get_dataset(n):
 
     return dataset, x, y
 
-def train(data_loader, model, criterion, optimizer, epoch):
-    
-    train_loss_list = []
-    print("hello")
+def train (data_loader, model, criterion, optimizer, epoch):
 
-    for batch_data in data_loader:
-        input, target = batch_data  
-        print("good bye")
-        hidden = torch.zeros(1, 99, 20) #(num_layers, num_batch, hidden_size)
-    for t in range(epoch):
+    for i in range(epoch):
 
-        train_loss = 0
-#        for batch_data in data_loader: # 1ミニバッチずつ計算
-            
-        model.zero_grad()
+      train_loss = 0
+      for i, (input_data, target) in enumerate(data_loader):
 
-        output, hidden = model(input.float(), hidden.float())
-        loss = criterion(output, target.float())
+          model.zero_grad()
 
-        loss.backward()
+          hidden = torch.zeros(1, 20)
+          output, hidden = model(input_data.float(), hidden.float())
 
-        optimizer.step()
+          loss = criterion(output, target.float())
+          loss.backward()
+          optimizer.step()
+          train_loss += loss.item()
+          print(t, loss.item())
+          ave_train_loss = train_loss/len(data_loader.dataset)
+          train_loss_list.append(ave_train_loss)
 
-        train_loss += loss.item()
-        print(t, loss.item())
-        ave_train_loss = train_loss/len(data_loader.dataset)
-        train_loss_list.append(ave_train_loss)
-
-        print("ave:" ,ave_train_loss)
-        print()
-    drawing_loss_graph(epoch, train_loss_list)
+          print("ave:" ,ave_train_loss)
+          print()
 
 def test(first_point, model):
 
@@ -111,7 +93,7 @@ def test(first_point, model):
     return record_output
 
 def drawing_loss_graph(epoch, train_loss_list):
- 
+
     loss_fig = plt.figure()
     plt.plot(range(epoch), train_loss_list, linestyle='-', label='train_loss')
 
@@ -119,27 +101,30 @@ def drawing_loss_graph(epoch, train_loss_list):
     plt.xlabel('epoch')
     plt.ylabel('loss')
     plt.grid()
-    plt.show()    
-    
+    plt.show()
+
 def main():
 
     data_number = 100 #準備するデータの数
-    batch_size  = 300 # 1つのミニバッチのデータの数
+    batch_size  = 20 # 1つのミニバッチのデータの数
+    epoch = 70  # epoch数
+    time_step = batch_size
+
+    input_size = 2
+    hidden_size = 20
 
     points, x, y = get_dataset(data_number)
-    dataset = my_dataset(points, noise=True)
+    dataset = my_dataset(points, time_step)
     data_loader = torch.utils.data.DataLoader(dataset, batch_size=batch_size, shuffle=True, num_workers=8)
 
-    model = Model()
+    model = Model(input_size, hidden_size)
     criterion = nn.MSELoss()
     learning_rate = 1e-4
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
-    epoch = 200
-
     first_point = [[1.0,0.0]]
     first_point = torch.Tensor(first_point)
-        
+
     model.train()
     train(data_loader, model, criterion, optimizer, epoch)
 
