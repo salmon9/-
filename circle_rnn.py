@@ -13,7 +13,7 @@ class Model(torch.nn.Module):
         self.input_size = input_size
         self.hidden_size = hidden_size
         self.rnncell = torch.nn.RNNCell(input_size, hidden_size)
-        self.fc = torch.nn.Linear(hidden_size, 1)
+        self.fc = torch.nn.Linear(hidden_size, 2)
     def forward(self, x, hidden):
         count = len(x)  # sequence length
         output = torch.Tensor()
@@ -51,7 +51,7 @@ def get_dataset(n):
     y = np.sin(parameter)
 
     dataset = np.array([x,y]).T
-    test_points = dataset[0:20]
+    test_points = dataset[-21:-1]
 
     return dataset, test_points
 
@@ -68,7 +68,6 @@ def train (data_loader, model, criterion, optimizer, epoch):
 
             hidden = torch.zeros(20, 20)
             output, hidden = model(input_data.float(), hidden.float())
-
             loss = criterion(output, target.float())
             loss.backward()
             optimizer.step()
@@ -83,17 +82,17 @@ def train (data_loader, model, criterion, optimizer, epoch):
             print()
             """
 
-def test(first_point, model):
+def test(test_points, model):
 
     record_output = np.array([[1.0, 0.0]])
 
     for i in range(100):
         hidden = torch.zeros(20, 20)
-        test_output = model(first_point, hidden.float())
-        first_point = test_output
+        test_output, hidden = model(test_points.float(), hidden.float())
+        test_points = test_points[1:20]
+        test_poits.append(test_output)
         test_output = test_output.reshape(1,2).detach().numpy()
         record_output = np.concatenate(([record_output, test_output]), axis=0)
-
     return record_output
 
 def drawing_loss_graph(epoch, train_loss_list):
@@ -121,7 +120,14 @@ def main():
     dataset = my_dataset(points, time_step)
     data_loader = torch.utils.data.DataLoader(dataset, batch_size=batch_size, shuffle=False, num_workers=8)
 
+    print("test points:", test_points.shape)
     print(test_points)
+    print(type(test_points))
+
+    test_points = torch.from_numpy(test_points.astype(np.float32)).clone()
+
+    print("test points:", test_points.shape)
+    print(type(test_points))
 
     model = Model(input_size, hidden_size)
     criterion = nn.MSELoss()
