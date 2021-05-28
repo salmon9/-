@@ -17,9 +17,10 @@ class Model(torch.nn.Module):
     def forward(self, x, hidden):
         count = len(x)  # sequence length
         output = torch.Tensor()
+
         for idx in range(count):
-           hidden = self.rnncell(x[:, idx], hidden)
-           output = torch.cat((output, hidden))
+            hidden = self.rnncell(x[:, idx], hidden)
+            output = torch.cat((output, hidden))
         output = output.reshape(len(x), -1, self.hidden_size)
         output  = self.fc(output[:,-1])
         return output, hidden
@@ -43,9 +44,6 @@ class my_dataset(torch.utils.data.Dataset):
   def __len__(self):
     return self.len
 
-  def __len__(self):
-    return self.len
-
 def get_dataset(n):
 
     parameter = np.radians(np.linspace(0,360,n)) #0〜360のランダム値 p:媒介変数
@@ -61,24 +59,59 @@ def train (data_loader, model, criterion, optimizer, epoch):
     for i in range(epoch):
 
       train_loss = 0
-      for i, (input_data, target) in enumerate(data_loader):
+      print("epoch:", i)
+      for j, (input_data, target) in enumerate(data_loader):
 
           model.zero_grad()
 
-          hidden = torch.zeros(1, 20)
+          hidden = torch.zeros(20, 20)
           output, hidden = model(input_data.float(), hidden.float())
 
           loss = criterion(output, target.float())
           loss.backward()
           optimizer.step()
+
+          print(j, ":", loss.item())
+          """
           train_loss += loss.item()
-          print(t, loss.item())
           ave_train_loss = train_loss/len(data_loader.dataset)
           train_loss_list.append(ave_train_loss)
 
           print("ave:" ,ave_train_loss)
           print()
+        """
+"""
+def train(data_loader, model, criterion, optimizer, epoch):
 
+    train_loss_list = []
+    print("hello")
+
+    for batch_data in data_loader:
+        input_data, target = batch_data
+        print("good bye")
+        hidden = torch.zeros(1, 99, 20) #(num_layers, num_batch, hidden_size)
+    for t in range(epoch):
+
+        train_loss = 0
+
+        model.zero_grad()
+
+        output, hidden = model(input_data.float(), hidden.float())
+        loss = criterion(output, target.float())
+
+        loss.backward()
+
+        optimizer.step()
+
+        train_loss += loss.item()
+        print(t, loss.item())
+        ave_train_loss = train_loss/len(data_loader.dataset)
+        train_loss_list.append(ave_train_loss)
+
+        print("ave:" ,ave_train_loss)
+        print()
+    drawing_loss_graph(epoch, train_loss_list)
+"""
 def test(first_point, model):
 
     record_output = np.array([[1.0, 0.0]])
