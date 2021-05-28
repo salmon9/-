@@ -26,23 +26,23 @@ class Model(torch.nn.Module):
         return output, hidden
 
 class my_dataset(torch.utils.data.Dataset):
-  def __init__(self, points, time_step):
+    def __init__(self, points, time_step):
 
-    self.time_step = time_step
-    self.points = points
-    self.len = len(points)
+        self.time_step = time_step
+        self.points = points
+        self.len = len(points)
 
-  def __getitem__(self, index):
+    def __getitem__(self, index):
 
-    input_data = np.zeros((self.time_step, 2))
-    for i in range(self.time_step):
-      input_data[i] = self.points[index-self.time_step+i] + np.random.normal(scale=0.001)
-    target = self.points[index] + np.random.normal(scale=0.001)
+        input_data = np.zeros((self.time_step, 2))
+        for i in range(self.time_step):
+            input_data[i] = self.points[index-self.time_step+i] + np.random.normal(scale=0.001)
+        target = self.points[index] + np.random.normal(scale=0.001)
 
-    return input_data, target
+        return input_data, target
 
-  def __len__(self):
-    return self.len
+    def __len__(self):
+        return self.len
 
 def get_dataset(n):
 
@@ -59,29 +59,29 @@ def train (data_loader, model, criterion, optimizer, epoch):
 
     for i in range(epoch):
 
-
       train_loss = 0
       print("epoch:", i)
+
       for j, (input_data, target) in enumerate(data_loader):
 
-          model.zero_grad()
+            model.zero_grad()
 
-          hidden = torch.zeros(20, 20)
-          output, hidden = model(input_data.float(), hidden.float())
+            hidden = torch.zeros(20, 20)
+            output, hidden = model(input_data.float(), hidden.float())
 
-          loss = criterion(output, target.float())
-          loss.backward()
-          optimizer.step()
+            loss = criterion(output, target.float())
+            loss.backward()
+            optimizer.step()
 
-          print(j, ":", loss.item())
-          """
-          train_loss += loss.item()
-          ave_train_loss = train_loss/len(data_loader.dataset)
-          train_loss_list.append(ave_train_loss)
+            print(j, ":", loss.item())
+            """
+            train_loss += loss.item()
+            ave_train_loss = train_loss/len(data_loader.dataset)
+            train_loss_list.append(ave_train_loss)
 
-          print("ave:" ,ave_train_loss)
-          print()
-        """
+            print("ave:" ,ave_train_loss)
+            print()
+            """
 
 def test(first_point, model):
 
