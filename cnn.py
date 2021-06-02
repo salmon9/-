@@ -51,13 +51,6 @@ def get_dataset(batch_size):
 
     return trainset, trainloader, testset, testloader, classes
 
-
-def imshow(img):
-    img = img / 2 + 0.5     # unnormalize
-    npimg = img.numpy()
-    plt.imshow(np.transpose(npimg, (1, 2, 0)))
-    plt.show()
-
 def train(trainloader, model, criterion, optimizer, epochs, path):
 
     for epoch in range(epochs):
@@ -99,7 +92,7 @@ def test(testloader, model):
             total += labels.size(0)
             correct += (predicted == labels).sum().item()
 
-    print('Accuracy of the network on the 10000 test images: %d %%' % (
+    print('Accuracy of 10000 test images: %d %%' % (
         100 * correct / total))
 
 def main():
