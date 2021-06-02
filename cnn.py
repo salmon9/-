@@ -60,23 +60,20 @@ def imshow(img):
 
 def train(trainloader, model, criterion, optimizer, epochs, path):
 
-    for epoch in range(epochs):  # loop over the dataset multiple times
+    for epoch in range(epochs):
 
         running_loss = 0.0
         for i, data in enumerate(trainloader, 0):
             # get the inputs; data is a list of [inputs, labels]
             inputs, labels = data
 
-            # zero the parameter gradients
             optimizer.zero_grad()
 
-            # forward + backward + optimize
             outputs = model(inputs)
             loss = criterion(outputs, labels)
             loss.backward()
             optimizer.step()
 
-            # print statistics
             running_loss += loss.item()
             if i % 1000 == 999:    # print every 2000 mini-batches
                 print("epoch: %d trained: %5d loss: %.3f" %
@@ -91,11 +88,11 @@ def test(testloader, model):
 
     correct = 0
     total = 0
-    # since we're not training, we don't need to calculate the gradients for our outputs
+
     with torch.no_grad():
         for data in testloader:
             images, labels = data
-            # calculate outputs by running images through the network
+
             outputs = model(images)
             # the class with the highest energy is what we choose as prediction
             _, predicted = torch.max(outputs.data, 1)
