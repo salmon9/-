@@ -79,7 +79,7 @@ def train(trainloader, model, criterion, optimizer, epochs, path):
             # print statistics
             running_loss += loss.item()
             if i % 1000 == 999:    # print every 2000 mini-batches
-                print("epoch: %d, trained: %5d loss: %.3f" %
+                print("epoch: %d trained: %5d loss: %.3f" %
                       (epoch + 1, i + 1, running_loss / 1000))
                 running_loss = 0.0
 
@@ -97,9 +97,6 @@ def test(testloader, model):
             images, labels = data
             # calculate outputs by running images through the network
             outputs = model(images)
-
-            print(torch.max(outputs.data))
-            print(outputs.data)
             # the class with the highest energy is what we choose as prediction
             _, predicted = torch.max(outputs.data, 1)
             total += labels.size(0)
