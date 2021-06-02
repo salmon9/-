@@ -79,11 +79,11 @@ def train(trainloader, model, criterion, optimizer, epochs, path):
             # print statistics
             running_loss += loss.item()
             if i % 1000 == 999:    # print every 2000 mini-batches
-                print('[%d, %5d] loss: %.3f' %
+                print("epoch: %d, trained: %5d loss: %.3f" %
                       (epoch + 1, i + 1, running_loss / 1000))
                 running_loss = 0.0
 
-    print('Finished Training')
+    print("Train Finished")
 
     torch.save(model.state_dict(), path)
 
@@ -97,6 +97,9 @@ def test(testloader, model):
             images, labels = data
             # calculate outputs by running images through the network
             outputs = model(images)
+
+            print(torch.max(outputs.data))
+            print(outputs.data)
             # the class with the highest energy is what we choose as prediction
             _, predicted = torch.max(outputs.data, 1)
             total += labels.size(0)
@@ -111,17 +114,6 @@ def main():
     epochs = 3
     trainset, trainloader, testset, testloader, classes = get_dataset(batch_size)
     path = './cifar_net.pth'
-
-
-# get some random training images
-    dataiter = iter(trainloader)
-    images, labels = dataiter.next()
-
-# show images
-    imshow(torchvision.utils.make_grid(images))
-# print labels
-    print(' '.join('%5s' % classes[labels[j]] for j in range(batch_size)))
-
     model = Model()
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
