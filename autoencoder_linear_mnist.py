@@ -2,10 +2,9 @@ import torch
 from torch.utils.data import DataLoader
 import torchvision
 from torchvision import transforms
-from torchvision.datasets import MNIST, CIFAR10  # CIFAR10もインポートしておく
+from torchvision.datasets import MNIST, CIFAR10  
 import numpy as np
 import matplotlib.pyplot as plt
-
 
 class Encoder(torch.nn.Module):
     def __init__(self, input_size):
@@ -41,8 +40,8 @@ class AutoEncoder(torch.nn.Module):
         self.enc = Encoder(org_size)
         self.dec = Decoder(org_size)
     def forward(self, x):
-        x = self.enc(x)  # エンコード
-        x = self.dec(x)  # デコード
+        x = self.enc(x)  
+        x = self.dec(x)  
         return x
 
 def get_dataset(batch_size):
@@ -87,22 +86,26 @@ def train(net, criterion, optimizer, epochs, trainloader):
     print('finished')
     return output_and_label, losses
 
+def main():
 
-iterator = iter(trainloader)
-x, _ = next(iterator)
-imshow(x)
+    iterator = iter(trainloader)
+    x, _ = next(iterator)
+    imshow(x)
 
 
-input_size = 28 * 28
-net = AutoEncoder(input_size)
-criterion = torch.nn.MSELoss()
-optimizer = torch.optim.SGD(net.parameters(), lr=0.1)
-EPOCHS = 100
+    input_size = 28 * 28
+    net = AutoEncoder(input_size)
+    criterion = torch.nn.MSELoss()
+    optimizer = torch.optim.SGD(net.parameters(), lr=0.1)
+    EPOCHS = 100
 
-output_and_label, losses = train(net, criterion, optimizer, EPOCHS, trainloader)
+    output_and_label, losses = train(net, criterion, optimizer, EPOCHS, trainloader)
 
-plt.plot(losses)
+    plt.plot(losses)
 
-output, org = output_and_label[-1]
-imshow(org.reshape(-1, 1, 28, 28))
-imshow(output.reshape(-1, 1, 28, 28))
+    output, org = output_and_label[-1]
+    imshow(org.reshape(-1, 1, 28, 28))
+    imshow(output.reshape(-1, 1, 28, 28))
+
+if __name__ == '__main__':
+    main()
