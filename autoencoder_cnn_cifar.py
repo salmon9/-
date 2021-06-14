@@ -10,7 +10,7 @@ class Encoder(torch.nn.Module):
     def __init__(self, input_size):
                                                                    #N, 1, 28, 28
         super().__init__()
-        self.fc1 = torch.nn.Conv2d(1, 16, 3, stride=2, padding=1)  #N, 16, 14, 14
+        self.fc1 = torch.nn.Conv2d(3, 16, 3, stride=2, padding=1)  #N, 16, 14, 14
         self.fc2 = torch.nn.Conv2d(16, 32, 3, stride=2, padding=1) #N, 32, 7, 7
         self.fc3 = torch.nn.Conv2d(32, 64, 7) #N, 64, 1, 1
     def forward(self, x):
@@ -24,7 +24,7 @@ class Decoder(torch.nn.Module):
         super().__init__()
         self.fc1 = torch.nn.ConvTranspose2d(64, 32, 7)  #N, 32, 7, 7
         self.fc2 = torch.nn.ConvTranspose2d(32, 16, 3, stride=2, padding=1, output_padding=1)  #N, 16, 14, 14
-        self.fc3 = torch.nn.ConvTranspose2d(16, 1, 3, stride=2, padding=1, output_padding=1)  #N, 1, 28, 28
+        self.fc3 = torch.nn.ConvTranspose2d(16, 3, 3, stride=2, padding=1, output_padding=1)  #N, 1, 28, 28
     def forward(self, x):
         x = torch.relu(self.fc1(x))
         x = torch.relu(self.fc2(x))
