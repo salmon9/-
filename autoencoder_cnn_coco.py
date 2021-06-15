@@ -99,8 +99,8 @@ def get_dataset(batch_size):
     # Transform を作成する
     transform = transforms.Compose([transforms.Resize(size), transforms.ToTensor()])
     # Dataset を作成する
-    trainset = ImageFolder("train2014_small", transform)
-    testset = ImageFolder("test2014_small", transform)
+    trainset = ImageFolder("train2014", transform)
+    testset = ImageFolder("test2014", transform)
     # DataLoader を作成する
     trainloader = DataLoader(trainset, batch_size=batch_size, num_workers=2)
     testloader = DataLoader(testset, batch_size=batch_size, num_workers=2)
