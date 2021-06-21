@@ -144,7 +144,7 @@ def train(net, criterion, optimizer, epochs, trainloader):
             loss = criterion(output, input_img)  #outputとinputを比較してlossを取得
             loss.backward()  #損失関数の逆伝播
             optimizer.step()  #重みの更新
-            running_loss += loss.item  #epoch毎のlossを計算したいからbatch毎に加算
+            running_loss += loss.item()  #epoch毎のlossを計算したいからbatch毎に加算
         avg_loss = running_loss / counter  #毎epochの平均loss
         losses.append(avg_loss)  #matplotlibでlossの変化のグラフを出すために使用
         print('loss:', avg_loss)  #lossの表示
