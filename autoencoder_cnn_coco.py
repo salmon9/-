@@ -132,25 +132,25 @@ def imshow(img, title):
 
 def train(net, criterion, optimizer, epochs, trainloader):
     losses = []  #lossを入れる配列
-    output_and_label = []  #ouputとinputを一緒に格納する配列
+    output_and_input = []  #ouputとinputを一緒に格納する配列
 
     for epoch in range(1, epochs+1):  #epoch回す
         print(f'epoch: {epoch}, ', end='')
         running_loss = 0.0  #epoch毎にlossを0にリセット
-        for counter, img in enumerate(trainloader):  #インデックス、要素を取り出す
+        for counter, input_img in enumerate(trainloader):  #インデックス、要素を取り出す
             optimizer.zero_grad()  #最適化対象のすべてのパラメータの勾配を0にする
-#            img = img.reshape(-1, input_size)  #cnnだといらない
-            output = net(img)  #学習モデルにimgを入力、出力結果がoutput
-            loss = criterion(output, img)  #outputとinputを比較してlossを取得
+#            input_img = input_img.reshape(-1, input_size)  #cnnだといらない
+            output = net(input_img)  #学習モデルにimgを入力、出力結果がoutput
+            loss = criterion(output, input_img)  #outputとinputを比較してlossを取得
             loss.backward()  #損失関数の逆伝播
             optimizer.step()  #重みの更新
             running_loss += loss.item  #epoch毎のlossを計算したいからbatch毎に加算
         avg_loss = running_loss / counter  #毎epochの平均loss
         losses.append(avg_loss)  #matplotlibでlossの変化のグラフを出すために使用
         print('loss:', avg_loss)  #lossの表示
-        output_and_label.append((output, img))  #outputとinputを一緒に格納
+        output_and_input.append((output, input_img))  #outputとinputを一緒に格納
     print('finished')
-    return output_and_label, losses
+    return output_and_input, losses
 
 def main():
     batch_size = 50
@@ -159,20 +159,20 @@ def main():
 
     iterator = iter(trainloader)
     x = next(iterator)
-    imshow(x, "sample")
+    imshow(x, "sample")  #一旦読み込んだdatasetの例を表示
 
-    net = AutoEncoder()
-    criterion = torch.nn.MSELoss()
-    optimizer = torch.optim.SGD(net.parameters(), lr=0.001)
+    net = AutoEncoder()  #学習モデルの宣言
+    criterion = torch.nn.MSELoss()  #損失関数の定義
+    optimizer = torch.optim.SGD(net.parameters(), lr=0.001)  #最適化手法の定義
     EPOCHS = 20
 
-    output_and_label, losses = train(net, criterion, optimizer, EPOCHS, trainloader)
+    output_and_input, losses = train(net, criterion, optimizer, EPOCHS, trainloader)
 
     plt.plot(losses)
 
-    output, org = output_and_label[-1]
+    output, input?img = output_and_input[-1]
 
-    imshow(org, "original")
+    imshow(input_img, "original")
     imshow(output, "output")
 
 if __name__ == '__main__':
