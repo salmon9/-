@@ -170,7 +170,7 @@ def main():
 
     plt.plot(losses)
 
-    output, input?img = output_and_input[-1]
+    output, input_img = output_and_input[-1]
 
     imshow(input_img, "original")
     imshow(output, "output")
