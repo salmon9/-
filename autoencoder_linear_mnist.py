@@ -2,7 +2,7 @@ import torch
 from torch.utils.data import DataLoader
 import torchvision
 from torchvision import transforms
-from torchvision.datasets import MNIST, CIFAR10  
+from torchvision.datasets import MNIST, CIFAR10
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -40,8 +40,8 @@ class AutoEncoder(torch.nn.Module):
         self.enc = Encoder(org_size)
         self.dec = Decoder(org_size)
     def forward(self, x):
-        x = self.enc(x)  
-        x = self.dec(x)  
+        x = self.enc(x)
+        x = self.dec(x)
         return x
 
 def get_dataset(batch_size):
@@ -64,7 +64,7 @@ def imshow(img):
     plt.show()
 #    plt.savefig('figure.png') # -----(2)
 
-def train(net, criterion, optimizer, epochs, trainloader):
+def train(net, criterion, optimizer, epochs, trainloader, input_size):
     losses = []
     output_and_label = []
 
@@ -88,20 +88,26 @@ def train(net, criterion, optimizer, epochs, trainloader):
 
 def main():
 
+    batch_size = 10
+
+    trainloader, testloader = get_dataset(batch_size)  #train用とtest用のdatasetを作成
+
+    """
     iterator = iter(trainloader)
     x, _ = next(iterator)
     imshow(x)
-
-
+    """
     input_size = 28 * 28
     net = AutoEncoder(input_size)
     criterion = torch.nn.MSELoss()
     optimizer = torch.optim.SGD(net.parameters(), lr=0.1)
     EPOCHS = 100
 
-    output_and_label, losses = train(net, criterion, optimizer, EPOCHS, trainloader)
+    output_and_label, losses = train(net, criterion, optimizer, EPOCHS, trainloader, input_size)
 
     plt.plot(losses)
+    plt.savefig('figure_linear_mnist.png')
+
 
     output, org = output_and_label[-1]
     imshow(org.reshape(-1, 1, 28, 28))
