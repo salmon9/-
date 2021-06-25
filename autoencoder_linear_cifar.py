@@ -1,3 +1,4 @@
+
 import torch
 from torch.utils.data import DataLoader
 import torchvision
@@ -71,7 +72,7 @@ def imshow(img):
     plt.show()
 #    plt.savefig('figure.png') # -----(2)
 
-def train(net, criterion, optimizer, epochs, trainloader):
+def train(net, criterion, optimizer, epochs, trainloader, input_size):
     losses = []
     output_and_label = []
 
@@ -93,26 +94,32 @@ def train(net, criterion, optimizer, epochs, trainloader):
     print('finished')
     return output_and_label, losses
 
-def main:
+def main():
 
+
+    batch_size = 10
+
+    trainloader, testloader = get_dataset(batch_size)  #train用とtest用のdatasetを作成
+    """
     iterator = iter(trainloader)
     x, _ = next(iterator)
     imshow(x)
+    """
 
-
-    input_size = 28 * 28
+    input_size = 32 * 32
     net = AutoEncoder(input_size)
     criterion = torch.nn.MSELoss()
     optimizer = torch.optim.SGD(net.parameters(), lr=0.1)
     EPOCHS = 100
 
-    output_and_label, losses = train(net, criterion, optimizer, EPOCHS, trainloader)
+    output_and_label, losses = train(net, criterion, optimizer, EPOCHS, trainloader, input_size)
 
     plt.plot(losses)
 
+
     output, org = output_and_label[-1]
-    imshow(org.reshape(-1, 1, 28, 28))
-    imshow(output.reshape(-1, 1, 28, 28))
+    imshow(org.reshape(-1, 3, 32, 32))
+    imshow(output.reshape(-1, 3, 32, 32))
 
 if __name__ == '__main__':
     main()
