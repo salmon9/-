@@ -7,7 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-class Net(torch.nn.Module):
+class Model(torch.nn.Module):
     def __init__(self, input_size, hidden_size):
         super().__init__()
         self.rnn = torch.nn.RNN(input_size, hidden_size)
@@ -38,22 +38,20 @@ class my_dataset(torch.utils.data.Dataset):
 
 def get_dataset():
 
-    coordinate_array = np.array([(0,0)])
+    dataset = np.array([(0,0)])
 
     for t in range (1, 1081):
 
         if t<361:
             x = np.sin(np.radians(t))
-            coordinate_array = np.append(coordinate_array, np.array([(t,x)]), axis=0)
+            dataset = np.append(dataset, np.array([(t,x)]), axis=0)
         elif t < 721:
             x = 3*np.sin(np.radians(t))
-            coordinate_array = np.append(coordinate_array, np.array([(t,x)]), axis=0)
+            dataset = np.append(dataset, np.array([(t,x)]), axis=0)
         else:
             x = 5*np.sin(np.radians(t))
-            coordinate_array = np.append(coordinate_array, np.array([(t,x)]), axis=0)
+            dataset = np.append(dataset, np.array([(t,x)]), axis=0)
 
-    dataset = coordinate_array
-    
     print("dataset shape:", dataset.shape)
     print("dataset type:", type(dataset))
     return dataset
@@ -121,6 +119,7 @@ def main():
     dataset = my_dataset(points, time_step)
     data_loader = torch.utils.data.DataLoader(dataset, batch_size=batch_size, shuffle=False, num_workers=8)
 
+    """
     print("test points:", test_points.shape)
     print(test_points)
     print(type(test_points))
@@ -129,6 +128,7 @@ def main():
 
     print("test points:", test_points.shape)
     print(type(test_points))
+    """
 
     model = Model(input_size, hidden_size)
     criterion = nn.MSELoss()
