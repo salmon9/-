@@ -67,7 +67,7 @@ def train (data_loader, model, criterion, optimizer, epoch):
 
             model.zero_grad()
 
-            hidden = torch.zeros(20, 20)
+            hidden = torch.zeros(1, 360, 20)
             output, hidden = model(input_data.float(), hidden.float())
             loss = criterion(output, target.float())
             loss.backward()
@@ -117,7 +117,7 @@ def main():
 
     points= get_dataset()
     dataset = my_dataset(points, time_step)
-    data_loader = torch.utils.data.DataLoader(dataset, batch_size=batch_size, shuffle=False, num_workers=8)
+    data_loader = torch.utils.data.DataLoader(dataset, batch_size=batch_size, shuffle=False, num_workers=6)
 
     """
     print("test points:", test_points.shape)
