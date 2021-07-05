@@ -51,8 +51,9 @@ def get_dataset():
         else:
             x = 5*np.sin(np.radians(t))
             coordinate_array = np.append(coordinate_array, np.array([(t,x)]), axis=0)
+
     dataset = coordinate_array
-    test_points = dataset[-21:-1]
+    
     print("dataset shape:", dataset.shape)
     print("dataset type:", type(dataset))
     return dataset
@@ -75,17 +76,17 @@ def train (data_loader, model, criterion, optimizer, epoch):
             optimizer.step()
 
             print(j, ":", loss.item())
-            """
+
             train_loss += loss.item()
             ave_train_loss = train_loss/len(data_loader.dataset)
             train_loss_list.append(ave_train_loss)
             print("ave:" ,ave_train_loss)
             print()
-            """
+
 
 def test(test_points, model):
 
-    record_output = np.array([[1.0, 0.0]])
+    record_output = np.array([[0.0, 0.0]])
 
     for i in range(100):
         hidden = torch.zeros(20, 20)
@@ -134,7 +135,7 @@ def main():
     learning_rate = 1e-4
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
-    first_point = [[1.0,0.0]]
+    first_point = [[0.0,0.0]]
     first_point = torch.Tensor(first_point)
 
     model.train()
