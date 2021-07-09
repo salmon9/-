@@ -6,6 +6,25 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
+class Model(torch.nn.Module):
+    def __init__(self, input_size, hidden_size):
+        super().__init__()
+        self.input_size = input_size
+        self.hidden_size = hidden_size
+        self.rnncell = torch.nn.RNNCell(input_size, hidden_size)
+        self.fc = torch.nn.Linear(hidden_size, 2)
+    def forward(self, x, hidden):
+        count = len(x)  # sequence length
+        output = torch.Tensor()
+
+        for idx in range(count):
+            hidden = self.rnncell(x[:, idx], hidden)
+            output = torch.cat((output, hidden))
+        output = output.reshape(len(x), -1, self.hidden_size)
+        output  = self.fc(output[:,-1])
+        return output, hidden
+
+
 class my_dataset(torch.utils.data.Dataset):
     def __init__(self, points, time_step):
 
@@ -28,19 +47,19 @@ class my_dataset(torch.utils.data.Dataset):
 
 def make_sin_dataset():
 
-    coordinate_array = np.array([(0,0)])
+    coordinate_array = np.array([0])
 
     for t in range (1,1081):
 
         if t<361:
             x = np.sin(np.radians(t))
-            coordinate_array = np.append(coordinate_array, np.array([(t,x)]), axis=0)
+            coordinate_array = np.append(coordinate_array, np.array([x]), axis=0)
         elif t < 721:
             x = 3*np.sin(np.radians(t))
-            coordinate_array = np.append(coordinate_array, np.array([(t,x)]), axis=0)
+            coordinate_array = np.append(coordinate_array, np.array([x]), axis=0)
         else:
             x = 5*np.sin(np.radians(t))
-            coordinate_array = np.append(coordinate_array, np.array([(t,x)]), axis=0)
+            coordinate_array = np.append(coordinate_array, np.array([x]), axis=0)
 
     print("coordinate_array", coordinate_array.shape)
     print(coordinate_array)
@@ -53,6 +72,7 @@ def make_sin_dataset():
     print(new_array.shape)
     print(new_array)
     plt.plot(new_array.T)
+
     plt.grid(True)
     plt.show()
 
