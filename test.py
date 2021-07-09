@@ -6,25 +6,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-class Model(torch.nn.Module):
-    def __init__(self, input_size, hidden_size):
-        super().__init__()
-        self.input_size = input_size
-        self.hidden_size = hidden_size
-        self.rnncell = torch.nn.RNNCell(input_size, hidden_size)
-        self.fc = torch.nn.Linear(hidden_size, 2)
-    def forward(self, x, hidden):
-        count = len(x)  # sequence length
-        output = torch.Tensor()
-
-        for idx in range(count):
-            hidden = self.rnncell(x[:, idx], hidden)
-            output = torch.cat((output, hidden))
-        output = output.reshape(len(x), -1, self.hidden_size)
-        output  = self.fc(output[:,-1])
-        return output, hidden
-
-
 class my_dataset(torch.utils.data.Dataset):
     def __init__(self, points, time_step):
 
@@ -64,8 +45,14 @@ def make_sin_dataset():
     print("coordinate_array", coordinate_array.shape)
     print(coordinate_array)
 
-    final_t, final_x = coordinate_array.T
-    plt.plot(final_t, final_x)
+    new_array = coordinate_array
+    for i in range(10):
+        temp_array = coordinate_array+i
+        new_array = np.vstack((new_array, temp_array))
+
+    print(new_array.shape)
+    print(new_array)
+    plt.plot(new_array.T)
     plt.grid(True)
     plt.show()
 
