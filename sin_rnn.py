@@ -68,6 +68,9 @@ def dataset_mizumashi(dataset, seq_num):
 
 def train (data_loader, model, criterion, optimizer, epoch):
 
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    model.to(device)
+
     for i in range(epoch):
 
       train_loss = 0
@@ -77,20 +80,20 @@ def train (data_loader, model, criterion, optimizer, epoch):
 
             model.zero_grad()
 
-            hidden = torch.zeros(1, 360, 20)
+            hidden = torch.zeros(1,10, 5)
             output, hidden = model(input_data[:,:-1].float(), hidden.float())
             loss = criterion(output, target[:,1:].float())
             loss.backward()
             optimizer.step()
 
             print(j, ":", loss.item())
-            """
+
             train_loss += loss.item()
             ave_train_loss = train_loss/len(data_loader.dataset)
             train_loss_list.append(ave_train_loss)
             print("ave:" ,ave_train_loss)
             print()
-            """
+
 
 def test(test_points, model):
 
@@ -122,7 +125,7 @@ def main():
     epoch = 100  # epoch数
 
     input_size = 2
-    hidden_size = 20
+    hidden_size = 5
 
     seq_num = 100
 
@@ -130,6 +133,7 @@ def main():
 
     points = dataset_mizumashi(points, seq_num)
 
+    print("points")
     print(points.shape)
     dataset = my_dataset(points)
 
